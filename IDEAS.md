@@ -24,3 +24,9 @@ name: foofoo
 type: dog
 gender: f
 ```
+
+or support piping from stdin (where `-` represents stdin)
+
+```
+$ cat file2.txt | perl -pe 's/,/\n/g' |  zipit --cycle ./file1.txt -
+```
