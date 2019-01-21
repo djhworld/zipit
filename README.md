@@ -40,7 +40,7 @@ Example use cases
 You have a CSV and you want to convert it to a bunch of JSON-lines.
 
 ```
-cat animals.csv
+$ cat animals.csv
 name,type,gender
 fido,dog,m
 foofoo,dog,f
