@@ -37,6 +37,8 @@ type mouse
 Example use cases
 -------
 
+### CSV to JSON 
+
 You have a CSV and you want to convert it to a bunch of JSON-lines.
 
 ```
@@ -56,6 +58,46 @@ $ zipit --json --cycle <(xsv headers animals.csv | awk '{print $2}') <(cat anima
 {"name":"casper","type":"mouse","gender":"m"}
 ```
 
+### Log File to record
+
+You have a log file that you know the structure of (e.g. web access logs) and want to quickly see the value of each field
+
+```
+$ cat fields.txt
+date
+time
+sc-status
+cs-uri-stem
+sc-bytes
+```
+
+```
+$ cat log.txt
+2019-01-01	11:32:33	200	/	102
+2019-01-01	11:32:34	200	/about.html	394
+2019-01-01	11:32:35	200	/blog.html	9338
+```
+
+```
+$ zipit --cycle fields.txt <(cat logs.txt | perl -pe 's/\t/\n/g')
+date	2019-01-01
+time	11:32:33
+sc-status	200
+cs-uri-stem	/
+sc-bytes	102
+
+date	2019-01-01
+time	11:32:34
+sc-status	200
+cs-uri-stem	/about.html
+sc-bytes	394
+
+date	2019-01-01
+time	11:32:35
+sc-status	200
+cs-uri-stem	/blog.html
+sc-bytes	9338
+```
 
 Why?
 -------
