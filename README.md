@@ -28,6 +28,15 @@ Example use cases
 You have a CSV and you want to convert it to a bunch of JSON-lines.
 
 ```
+cat animals.csv
+name,type,gender
+fido,dog,m
+foofoo,dog,f
+mittens,cat,f
+casper,mouse,m
+```
+
+```
 $ zipit --json --cycle <(xsv headers animals.csv | awk '{print $2}') <(cat animals.csv| tail -n +2 | xsv flatten --no-headers -s '' | awk '{print $2}')
 {"name":"fido","type":"dog","gender":"m"}
 {"name":"foofoo","type":"dog","gender":"f"}
