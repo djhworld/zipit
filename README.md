@@ -9,17 +9,24 @@ Example:
 
 ```
 $ cat file1.txt
-foo
-bar
-baz
+name
+type
 $ cat file2.txt
-do
-re
-me
-$ zipit file1.txt file2.txt
-foo do
-bar re
-baz me
+mittens
+cat
+fido
+dog
+casper
+mouse
+$ zipit --cycle file1.txt file2.txt
+name mittens
+type cat
+
+name fido
+type dog
+
+name casper
+type mouse
 ```
 
 Example use cases
