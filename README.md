@@ -11,6 +11,9 @@ Example:
 $ cat file1.txt
 name
 type
+```
+
+```
 $ cat file2.txt
 mittens
 cat
@@ -18,6 +21,8 @@ fido
 dog
 casper
 mouse
+```
+```
 $ zipit --cycle file1.txt file2.txt
 name mittens
 type cat
