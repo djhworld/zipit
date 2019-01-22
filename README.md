@@ -84,7 +84,7 @@ $ cat log.txt
 ```
 
 ```
-$ zipit --cycle fields.txt <(cat logs.txt | perl -pe 's/\t/\n/g')
+$ zipit --cycle fields.txt <(perl -pe 's/\t/\n/g' log.txt)
 date	2019-01-01
 time	11:32:33
 sc-status	200
