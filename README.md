@@ -5,33 +5,25 @@ Takes a line from two files and prints them to stdout, until either file reaches
 
 Includes option to cycle the first file (`left_file`) indefinitely.
 
-Example:
+Usage:
 
 ```
-$ cat file1.txt
-name
-type
-```
+zipit 0.1.0
+djhworld <@djhworld>
+Takes a line from each input file and prints them to stdout, until either file reaches EOF
 
-```
-$ cat file2.txt
-mittens
-cat
-fido
-dog
-casper
-mouse
-```
-```
-$ zipit --cycle file1.txt file2.txt
-name mittens
-type cat
+USAGE:
+    zipit [FLAGS] <LEFT_FILE> <RIGHT_FILE>
 
-name fido
-type dog
+FLAGS:
+    -c, --cycle      Cycle all lines from <LEFT_FILE> indefinitely
+    -h, --help       Prints help information
+    -j, --json       Output as JSON
+    -V, --version    Prints version information
 
-name casper
-type mouse
+ARGS:
+    <LEFT_FILE>     
+    <RIGHT_FILE>    
 ```
 
 Alternatively the second file can be provided via stdin by either providing a `-`
