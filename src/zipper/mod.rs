@@ -24,9 +24,9 @@ impl Zipper for DefaultZipper {
         for items in left_iter.zip(right_iter) {
             let left = items.0?;
             let right = items.1?;
-            output.write(left, right);
+            output.write(left, right)?;
         }
-        output.end();
+        output.end()?;
         return Ok(());
     }
 }
@@ -49,13 +49,18 @@ impl Zipper for CycledZipper {
                 for items in l.iter().cycle().zip(right_iter) {
                     let left = items.0;
                     let right = items.1?;
-                    output.write(left.to_owned(), right);
+                    output.write(left.to_owned(), right)?;
 
                     count += 1;
                     if count == l.len() {
                         count = 0;
-                        output.end();
+                        output.end()?;
                     }
+                }
+
+                if count > 0 {
+                    eprintln!("WARNING: right input is shorter than left input");
+                    output.end()?;
                 }
             }
             Err(err) => return Err(err),
@@ -191,11 +196,13 @@ mod tests {
     }
 
     impl ZipOutput for MockOutput {
-        fn write(&mut self, left: String, right: String) {
+        fn write(&mut self, left: String, right: String) -> Result<()> {
             self.buffer.push((left, right));
+            Ok(())
         }
-        fn end(&mut self) {
+        fn end(&mut self) -> Result<()> {
             self.end_called = true;
+            Ok(())
         }
     }
 
