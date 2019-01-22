@@ -10,20 +10,20 @@ Usage:
 ```
 zipit 0.1.0
 djhworld <@djhworld>
-Takes a line from each input file and prints them to stdout, until either file reaches EOF
+Takes a line from two files and prints them to stdout, until either file reaches EOF
 
 USAGE:
-    zipit [FLAGS] <LEFT_FILE> <RIGHT_FILE>
+    zipit [FLAGS] <left_file> [right_file]
 
 FLAGS:
-    -c, --cycle      Cycle all lines from <LEFT_FILE> indefinitely
+    -c, --cycle      Cycle lines from <left_file> indefinitely
     -h, --help       Prints help information
-    -j, --json       Output as JSON
+    -j, --json       Output as JSON (warning: requires unique lines in <left_file>)
     -V, --version    Prints version information
 
 ARGS:
-    <LEFT_FILE>     
-    <RIGHT_FILE>    
+    <left_file>     The left data set (required)
+    <right_file>    The right data set (optional, defaults to stdin (-) if omitted).
 ```
 
 Alternatively the second file can be provided via stdin by either providing a `-`
