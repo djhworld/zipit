@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::io::Error;
 use std::io::ErrorKind::InvalidInput;
 use std::io::Result;
+use std::io::Write;
 
 pub trait ZipOutput {
     fn write(&mut self, left: String, right: String) -> Result<()>;
@@ -10,12 +11,14 @@ pub trait ZipOutput {
 
 pub struct JsonOuput {
     buffer: HashMap<String, String>,
+    writer: Box<Write>,
 }
 
 impl JsonOuput {
-    pub fn new() -> JsonOuput {
+    pub fn new(writer: Box<Write>) -> JsonOuput {
         return JsonOuput {
             buffer: HashMap::new(),
+            writer: writer,
         };
     }
 }
@@ -34,7 +37,7 @@ impl ZipOutput for JsonOuput {
 
     fn end(&mut self) -> Result<()> {
         let j = serde_json::to_string(&self.buffer);
-        println!("{}", j.unwrap());
+        write!(self.writer, "{}\n", j.unwrap())?;
         self.buffer.clear();
         Ok(())
     }
@@ -42,11 +45,15 @@ impl ZipOutput for JsonOuput {
 
 pub struct TabbedOutput {
     buffer: Vec<String>,
+    writer: Box<Write>,
 }
 
 impl TabbedOutput {
-    pub fn new() -> TabbedOutput {
-        return TabbedOutput { buffer: Vec::new() };
+    pub fn new(writer: Box<Write>) -> TabbedOutput {
+        return TabbedOutput {
+            buffer: Vec::new(),
+            writer: writer,
+        };
     }
 }
 
@@ -61,7 +68,7 @@ impl ZipOutput for TabbedOutput {
     fn end(&mut self) -> Result<()> {
         self.buffer.push(BLANK.to_string());
         for i in self.buffer.iter() {
-            println!("{}", i);
+            write!(self.writer, "{}\n", i)?;
         }
         self.buffer.clear();
         Ok(())

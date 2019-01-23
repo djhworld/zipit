@@ -65,8 +65,8 @@ fn run(opt: &Opt) -> Result<()> {
         Some(file) => open_file_as_line_reader(file.as_str()),
     }?;
 
-    let mut json_output = JsonOuput::new();
-    let mut tabbed_output = TabbedOutput::new();
+    let mut json_output = JsonOuput::new(Box::new(std::io::stdout()));
+    let mut tabbed_output = TabbedOutput::new(Box::new(std::io::stdout()));
 
     let renderer: Box<&mut ZipOutput> = match opt.json {
         true => Box::new(&mut json_output),
@@ -88,8 +88,16 @@ fn main() {
     match run(&opt) {
         Ok(()) => process::exit(0),
         Err(err) => {
-            eprintln!("ERROR: {}", err);
-            process::exit(1);
+            match err.kind() {
+                std::io::ErrorKind::BrokenPipe => {
+                    // is it right to ignore this error?
+                    process::exit(1);
+                },
+                _ => {
+                    eprintln!("ERROR: {}", err);
+                    process::exit(1);
+                }
+            }
         }
     }
 }
