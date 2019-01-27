@@ -1,4 +1,3 @@
-mod io;
 mod zipper;
 
 use std::fs::File;
@@ -8,7 +7,6 @@ use std::io::Result;
 use std::process;
 use structopt::StructOpt;
 
-use io::LineReader;
 use zipper::render::{JsonOuput, TabbedOutput, ZipOutput};
 use zipper::{CycledZipper, DefaultZipper, Zipper};
 
@@ -33,22 +31,21 @@ struct Opt {
     right_file: Option<String>,
 }
 
-fn open_file_as_line_reader(file: &str) -> Result<LineReader> {
+fn open_file_as_line_reader(file: &str) -> Result<BufReader<Box<Read>>> {
     match File::open(file) {
         Ok(f) => {
             let buffer = BufReader::new(Box::new(f) as Box<Read>);
-            let lr = LineReader::new(buffer);
-            return Ok(lr);
+            return Ok(buffer);
         }
         Err(err) => Err(update_error(format!("failed to open {}", file), err)),
     }
 }
 
-fn open_stdin_as_line_reader() -> Result<LineReader> {
+fn open_stdin_as_line_reader() -> Result<BufReader<Box<Read>>> {
     let stdin = Box::leak(Box::new(std::io::stdin()));
     let stdin_lock = stdin.lock();
     let buffer = BufReader::new(Box::new(stdin_lock) as Box<Read>);
-    Ok(LineReader::new(buffer))
+    Ok(buffer)
 }
 
 fn update_error(context: String, e: std::io::Error) -> std::io::Error {
@@ -59,7 +56,7 @@ fn update_error(context: String, e: std::io::Error) -> std::io::Error {
 fn run(opt: &Opt) -> Result<()> {
     let reader_left = open_file_as_line_reader(opt.left_file.as_str())?;
 
-    let reader_right: LineReader = match &opt.right_file {
+    let reader_right: BufReader<Box<Read>> = match &opt.right_file {
         None => open_stdin_as_line_reader(),
         Some(ref file) if file.as_str() == "-" => open_stdin_as_line_reader(),
         Some(file) => open_file_as_line_reader(file.as_str()),
@@ -78,7 +75,11 @@ fn run(opt: &Opt) -> Result<()> {
         false => Box::new(DefaultZipper {}),
     };
 
-    zipper.zip(Box::new(reader_left), Box::new(reader_right), renderer)?;
+    zipper.zip(
+        Box::new(reader_left.lines()),
+        Box::new(reader_right.lines()),
+        renderer,
+    )?;
 
     Ok(())
 }
@@ -92,7 +93,7 @@ fn main() {
                 std::io::ErrorKind::BrokenPipe => {
                     // is it right to ignore this error?
                     process::exit(1);
-                },
+                }
                 _ => {
                     eprintln!("ERROR: {}", err);
                     process::exit(1);
